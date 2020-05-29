@@ -9,6 +9,7 @@ def main():
     args = config.parse_cli()
     cfg = config.get_configuration(args)
     config.initialize_directories(cfg)
+    addon_loader.pass_config_to_addons(cfg)
     extract_scene.main(cfg)
 
 

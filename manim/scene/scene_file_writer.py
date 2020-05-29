@@ -20,6 +20,8 @@ from ..utils.file_ops import add_extension_if_not_present
 from ..utils.file_ops import get_sorted_integer_files
 from ..utils.sounds import get_full_sound_file_path
 
+from ..addon.addon_helper import movie_paths
+
 
 class SceneFileWriter(object):
     """
@@ -531,6 +533,9 @@ class SceneFileWriter(object):
             shutil.move(temp_file_path, movie_file_path)
             os.remove(sound_file_path)
 
+        # Send the file path to the add-on helper so it
+        # can be passed to add-ons that need it
+        movie_paths.append(movie_file_path)
         self.print_file_ready_message(movie_file_path)
 
     def print_file_ready_message(self, file_path):

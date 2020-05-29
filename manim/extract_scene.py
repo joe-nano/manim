@@ -7,6 +7,8 @@ import sys
 import traceback
 import importlib.util
 
+from .addon import addon_loader
+
 from .scene.scene import Scene
 from .utils.sounds import play_error_sound
 from .utils.sounds import play_finish_sound
@@ -170,9 +172,18 @@ def main(config):
 
     for SceneClass in scene_classes_to_render:
         try:
+            # Before we start rendering, fire the on_render_ready()
+            # function in each add-on
+            addon_loader.run_on_render_ready(scene_classes_to_render)
+
             # By invoking, this renders the full scene
             scene = SceneClass(**scene_kwargs)
             open_file_if_needed(scene.file_writer, **config)
+
+            # By this point, the scene is done rendering, so fire the on_render()
+            # function in each add-on
+            addon_loader.run_on_rendered(scene_classes_to_render)
+
             if config["sound"]:
                 play_finish_sound()
         except Exception:

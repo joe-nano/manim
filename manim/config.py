@@ -4,6 +4,8 @@ import os
 import sys
 import types
 
+from .addon import addon_loader
+
 from . import constants
 from . import dirs
 from .logger import logger
@@ -140,7 +142,29 @@ def parse_cli():
             "--text_dir",
             help="Directory to write text",
         )
-        return parser.parse_args()
+
+        # For add-ons
+        parser.add_argument(
+            "--addon_info",
+            action="store_true",
+            help="Outputs information about available add-ons"
+        )
+
+        # Now that the built-in arguments have been loaded,
+        # include the additional flags added by add-ons
+        parser = addon_loader.load_parser_args(parser)
+
+        args = parser.parse_args()
+
+        # Print add-on info if the user requested it
+        if args.addon_info:
+            addon_loader.print_addon_info()
+            sys.exit(0)
+        elif args.file is None:
+            parser.print_help()
+            sys.exit(2)
+
+        return args
     except argparse.ArgumentError as err:
         logger.error(str(err))
         sys.exit(2)
@@ -245,6 +269,7 @@ def initialize_directories(config):
     dir_config = {}
     dir_config["media_dir"] = config["media_dir"] or dirs.MEDIA_DIR
     dir_config["video_dir"] = config["video_dir"] or dirs.VIDEO_DIR
+    #dir_config["addon_dir"] = config["addon_dir"] or dirs.ADDON_DIR
 
     if not (config["video_dir"] and config["tex_dir"]):
         if config["media_dir"]:
@@ -273,11 +298,16 @@ def initialize_directories(config):
     if not config["video_dir"] or dirs.VIDEO_DIR:
         dir_config["video_dir"] = os.path.join(dir_config["media_dir"], "videos")
 
+    #if not config["addon_dir"] or dirs.ADDON_DIR:
+    #    dir_config["addon_dir"] = os.path.abspath("./addons")
+
     for folder in [dir_config["video_dir"], dir_config["tex_dir"], dir_config["text_dir"]]:
         if folder != "" and not os.path.exists(folder):
             os.makedirs(folder)
+
 
     dirs.MEDIA_DIR = dir_config["media_dir"]
     dirs.VIDEO_DIR = dir_config["video_dir"]
     dirs.TEX_DIR = dir_config["tex_dir"]
     dirs.TEXT_DIR = dir_config["text_dir"]
+    #dirs.ADDON_DIR = dir_config["addon_dir"]

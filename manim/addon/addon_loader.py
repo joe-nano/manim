@@ -10,7 +10,7 @@ addons_read = False
 
 
 def load_parser_args(parser):
-    # Adds every addon's new cmd flags to the parser
+    # Adds every add-on's new cmd flags to the parser
     if not addons_read:
         read_addons()
     for addon in addons:
