@@ -36,4 +36,4 @@ if __name__ == "__main__":
     scene_name= "ExampleAddUpdater2"
     script = f"{Path(__file__).resolve()}"
     os.system(f"manim -i -l -p -c 'BLACK' --video_dir ~/Downloads/ " + script + " " + scene_name)
-    #os.system("ffmpeg -i ~/Downloads/" + scene_name + ".mp4" + " "+  "~/Downloads/"+ scene_name + ".gif")
+    os.system("ffmpeg -i ~/Downloads/" + scene_name + ".mp4" + " "+  "~/Downloads/"+ scene_name + ".gif")
