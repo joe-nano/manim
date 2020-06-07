@@ -595,9 +595,9 @@ class GraphScene(Scene):
             graph,
             x_min=t_min,
             x_max=t_max,
-            dx=dx,
-            stroke_width=0,
-        ).set_fill(opacity=self.area_opacity)
+            dx=dx*0.1,
+            stroke_width=0.001,
+        ).set_fill(opacity=0.3).set_color(WHITE)
 
     def transform_between_riemann_rects(self, curr_rects, new_rects, **kwargs):
         """

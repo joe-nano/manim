@@ -68,26 +68,18 @@ class SceneFileWriter(object):
         """
         module_directory = self.output_directory or self.get_default_module_directory()
         scene_name = self.file_name or self.get_default_scene_name()
-        #print("1")
-        #print(dirs.MEDIA_DIR)
         if self.save_last_frame or self.save_pngs:
-            if dirs.MEDIA_DIR != "":
-                image_dir = guarantee_existence(os.path.join(
-                    dirs.MEDIA_DIR,
-                    "images",
-                    module_directory,
-                ))
+            image_dir = guarantee_existence(os.path.join(
+                dirs.VIDEO_DIR
+            ))
             self.image_file_path = os.path.join(
                 image_dir,
                 add_extension_if_not_present(scene_name, ".png")
             )
         if self.write_to_movie:
-            if dirs.VIDEO_DIR != "":
-                movie_dir = guarantee_existence(os.path.join(
-                    dirs.VIDEO_DIR,
-                    module_directory,
-                    self.get_resolution_directory(),
-                ))
+            movie_dir = guarantee_existence(os.path.join(
+                dirs.VIDEO_DIR
+            ))
             self.movie_file_path = os.path.join(
                 movie_dir,
                 add_extension_if_not_present(
@@ -146,7 +138,7 @@ class SceneFileWriter(object):
             that immediately contains the video file will be
             480p15.
             The file structure should look something like:
-            
+
             MEDIA_DIR
                 |--Tex
                 |--texts
@@ -172,7 +164,7 @@ class SceneFileWriter(object):
         written to.
         It is usually named "images", but can be changed by changing
         "image_file_path".
-        
+
         Returns
         -------
         str
@@ -183,7 +175,7 @@ class SceneFileWriter(object):
     def get_next_partial_movie_path(self):
         """
         Manim renders each play-like call in a short partial
-        video file. All such files are then concatenated with 
+        video file. All such files are then concatenated with
         the help of FFMPEG.
 
         This method returns the path of the next partial movie.
@@ -230,18 +222,18 @@ class SceneFileWriter(object):
                           time=None,
                           gain_to_background=None):
         """
-        This method adds an audio segment from an 
+        This method adds an audio segment from an
         AudioSegment type object and suitable parameters.
-        
+
         Parameters
         ----------
         new_segment : AudioSegment
             The audio segment to add
-        
+
         time : int, float, optional
             the timestamp at which the
             sound should be added.
-        
+
         gain_to_background : optional
             The gain of the segment from the background.
         """
@@ -276,7 +268,7 @@ class SceneFileWriter(object):
         ----------
         sound_file : str
             The path to the sound file.
-        
+
         time : float or int, optional
             The timestamp at which the audio should be added.
 
@@ -410,7 +402,7 @@ class SceneFileWriter(object):
             '-i', '-',  # The imput comes from a pipe
             '-an',  # Tells FFMPEG not to expect any audio
             '-loglevel', 'error',
-        ]
+                  ]
         # TODO, the test for a transparent background should not be based on
         # the file extension.
         if self.movie_file_extension == ".mov":
