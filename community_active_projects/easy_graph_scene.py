@@ -1,13 +1,16 @@
 from manim import *
 
 
-class Area(GraphScene):
+class XAxis(GraphScene):
+    CONFIG = {
+        "x_min": 2,
+        "x_max": 10,
+    }
     def construct(self):
         self.setup_axes()
-        graph_func = lambda x:x**2/2
-        graph = self.get_graph(graph_func,x_min=0,x_max=4)
-        area = self.get_area(graph,t_min=0,t_max=6)
-        self.add(graph,area)
+        graph_func = lambda x:(x-7)**2/2
+        graph = self.get_graph(graph_func,x_min=5,x_max=9)
+        self.add(graph)
 
 
 from pathlib import Path

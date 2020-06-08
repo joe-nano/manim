@@ -3,6 +3,7 @@ from manim import *
 
 class CarnotProcess(GraphScene):
     CONFIG = {
+
         "x_min": 0,
         "x_max": 4,
         "x_axis_width": 9,
@@ -17,7 +18,7 @@ class CarnotProcess(GraphScene):
         "y_axis_label": "$P$",
        # "y_labeled_nums" :range(0,26,2),
 
-        "graph_origin": 2.5 * DOWN + 4 * LEFT,
+        "graph_origin": 3 * DOWN + 6.5 * LEFT,
         "function_color": RED,
         "axes_color": GREY,
 
@@ -27,8 +28,7 @@ class CarnotProcess(GraphScene):
 
     def construct(self):
         R = 8.314
-        Tmax = 300
-        Tmin = 280
+
         self.setup_axes(animate=False)
         import matplotlib.pyplot as plt
         from scipy.constants import zero_Celsius
@@ -74,22 +74,18 @@ class CarnotProcess(GraphScene):
         adiabatisch41_graph = self.get_graph(lambda x : p_adiabatisch(x, p4,V4)*0.01, x_min=V4, x_max=V1 ,color = BLACK)
 
         isotherm12_graph_over = self.get_graph(lambda x : p_isotherm(x, Tmax)*0.01, x_min=V1-0.1, x_max=V2+0.5 ,color = RED, stroke_opacity=0.5)
-        isotherm12_graph_over_Text = TexMobject(r" T_{max}").scale(0.5).next_to(isotherm12_graph_over,RIGHT,aligned_edge=DOWN, buff=0)
+        isotherm12_graph_over_Text = TexMobject(r" \text{T}_{\text{max}}").scale(0.7).next_to(isotherm12_graph_over,RIGHT,aligned_edge=DOWN, buff=0)
         self.add(isotherm12_graph_over,isotherm12_graph_over_Text)
 
         isotherm34_graph_over = self.get_graph(lambda x : p_isotherm(x, Tmin)*0.01, x_min=V3+0.3, x_max=V4-0.5 ,color = BLUE, stroke_opacity=0.5)
-        isotherm34_graph_over_Text = TexMobject(r" T_{min}").scale(0.5).next_to(isotherm34_graph_over,RIGHT,aligned_edge=DOWN, buff=0)
+        isotherm34_graph_over_Text = TexMobject(r"\text{T}_{\text{min}}").scale(0.7).next_to(isotherm34_graph_over,RIGHT,aligned_edge=DOWN, buff=0)
         self.add(isotherm34_graph_over,isotherm34_graph_over_Text)
 
-        upper_graph= self.get_graph(lambda x : p_isotherm(x, Tmax)*0.01  if x < V2 else p_adiabatisch(x, p2,V2)*0.01, x_min=V1-0.1, x_max=V2+0.5 ,color = RED, stroke_opacity=0.5)
+        upper_graph= self.get_graph(lambda x : p_isotherm(x, Tmax)*0.01  if x < V2 else p_adiabatisch(x, p2,V2)*0.01)
         lower_graph = self.get_graph(lambda x :p_adiabatisch(x, p4,V4)*0.01 if x < V4 else p_isotherm(x, Tmin)*0.01)
-        area_test = self.get_area(upper_graph,V1,V3,bounded=lower_graph)
-        self.add(area_test)
-        # area = self.get_area(isotherm12_graph,V1,V4,bounded=adiabatisch41_graph)
-        # area2 = self.get_area(isotherm12_graph,V4,V2,bounded=isotherm34_graph)
-        # area3 = self.get_area(adiabatisch23_graph,V2,V3,bounded=isotherm34_graph)
-        #
-        # self.add(area,area2,area3)
+        area_in_bewtween = self.get_area(upper_graph,V1,V3,bounded=lower_graph,dx_scaling=0.2)
+        self.add(area_in_bewtween)
+
 
 
 
@@ -119,7 +115,7 @@ class CarnotProcess(GraphScene):
         x_label_p1 = TexMobject("{ V }_{ 1 }")
         x_label_p1.next_to(v_line_p1, DOWN)
         self.add(v_line_p1,graph_dot_p1,x_label_p1)
-        num1 = TexMobject(r"{\large \textcircled{\small 1}} ").set_color(BLACK).scale(0.5)
+        num1 = TexMobject(r"{\large \textcircled{\small 1}} ").set_color(BLACK).scale(0.7)
         num1.next_to(graph_dot_p1,RIGHT,buff=0.4*SMALL_BUFF)
         self.add(v_line_p1,graph_dot_p1,x_label_p1,num1)
 
@@ -129,7 +125,7 @@ class CarnotProcess(GraphScene):
         graph_dot_p1.move_to(get_graph_point(input_tracker_p1,adiabatisch23_graph))
         x_label_p1 = TexMobject("{ V }_{ 2 }")
         x_label_p1.next_to(v_line_p1, DOWN)
-        num1 = TexMobject(r"{\large \textcircled{\small 2}} ").set_color(BLACK).scale(0.5)
+        num1 = TexMobject(r"{\large \textcircled{\small 2}} ").set_color(BLACK).scale(0.7)
         num1.next_to(graph_dot_p1,UP,buff=0.4*SMALL_BUFF)
         self.add(v_line_p1,graph_dot_p1,x_label_p1,num1)
 
@@ -140,7 +136,7 @@ class CarnotProcess(GraphScene):
         x_label_p1 = TexMobject("{ V }_{ 3 }")
         x_label_p1.next_to(v_line_p1, DOWN)
         self.add(v_line_p1,graph_dot_p1,x_label_p1)
-        num1 = TexMobject(r"{\large \textcircled{\small 3}} ").set_color(BLACK).scale(0.5)
+        num1 = TexMobject(r"{\large \textcircled{\small 3}} ").set_color(BLACK).scale(0.7)
         num1.next_to(graph_dot_p1,UP,buff=0.4*SMALL_BUFF)
         self.add(v_line_p1,graph_dot_p1,x_label_p1,num1)
 
@@ -150,12 +146,68 @@ class CarnotProcess(GraphScene):
         graph_dot_p1.move_to(get_graph_point(input_tracker_p1,adiabatisch41_graph))
         x_label_p1 = TexMobject("{ V }_{ 4 }")
         x_label_p1.next_to(v_line_p1, DOWN)
-        num1 = TexMobject(r"{\large \textcircled{\small 4}} ").set_color(BLACK).scale(0.5)
+        num1 = TexMobject(r"{\large \textcircled{\small 4}} ").set_color(BLACK).scale(0.7)
         num1.next_to(graph_dot_p1,DOWN+LEFT,buff=-0.3*SMALL_BUFF)
         self.add(v_line_p1,graph_dot_p1,x_label_p1,num1)
 
+        #annotation:
+        ddd= TexMobject(r"\Delta W").next_to(graph_dot_p1, UP).scale(0.7)
+        bg= ddd.add_background_rectangle(color= WHITE)
+        self.add(ddd)
+
+        input_tracker_Q= ValueTracker(V1+(V2-V1)/2)
+        graph_dot_p1 = Dot(color=BLACK)
+        graph_dot_p1.move_to(get_graph_point(input_tracker_Q,isotherm12_graph))
+        #self.add(graph_dot_p1)
+        aa= Arrow(graph_dot_p1.get_center()+UR*0.5, graph_dot_p1.get_center(),buff=0).set_color(BLACK)
+        self.add(aa)
+        ddd= TexMobject(r"\Delta Q_a").scale(0.7)
+        self.add(ddd.next_to(graph_dot_p1.get_center()+UR*0.5,UP,buff=0))
+
+        input_tracker_Q2= ValueTracker(V3+(V4-V3)/2)
+        graph_dot_p1 = Dot(color=BLACK)
+        graph_dot_p1.move_to(get_graph_point(input_tracker_Q2,isotherm34_graph))
+        #self.add(graph_dot_p1)
+        aa= Arrow(graph_dot_p1.get_center(), graph_dot_p1.get_center()+DL*0.5,buff=0).set_color(BLACK)
+        self.add(aa)
+        ddd= TexMobject(r"\Delta Q_{ab}").scale(0.7)
+        self.add(ddd.next_to(graph_dot_p1.get_center()+DL*0.5,DOWN,buff=0.05))
+
+        moving_dot = Dot()
+        val_tracker1=ValueTracker(V1)
+        val_tracker2= ValueTracker(V2)
+        moving_dot.move_to(get_graph_point(val_tracker1,isotherm12_graph)).set_color(ORANGE)
+        self.add(moving_dot)
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker1,isotherm12_graph)).set_color(ORANGE))
+        self.add(moving_dot)
+        self.play(val_tracker1.set_value, val_tracker2.get_value(), rate_func= linear,run_time=10)
+        self.wait()
+        def make_box():
+            p1 = [0,1,0]
+            p2 = [0,0,0]
+            p3= [1,0,0]
+            p4 = [1,1,0]
+            l1 = Line(p1,p2).set_color(BLACK)
+            l2 = Line(p2,p3).set_color(BLACK)
+            l3 = Line(p3,p4).set_color(BLACK)
+            obj = VGroup(l1,l2,l3)
+            return obj
+        DISTANCELEFTRIGHT= 1.1
+        cold = make_box().shift(DOWN+DISTANCELEFTRIGHT*LEFT)
+        cold.add_background_rectangle(color=BLUE)
+        cold.text = TexMobject(r" \text{T}_{\text{min}}").scale(0.7).set_color(BLACK)
+        cold.text.move_to(cold.get_center())
+        hot = make_box().shift(DOWN+DISTANCELEFTRIGHT*RIGHT)
+        hot.text = TexMobject(r" \text{T}_{\text{max}}").scale(0.7).set_color(BLACK)
+        hot.text.move_to(hot.get_center())
+
+        hot.add_background_rectangle(color= RED)
+        obj = make_box()
+        VGroup(obj,cold, hot, cold.text, hot.text).to_edge(UR).shift(2*DOWN+LEFT*DISTANCELEFTRIGHT)
+
+        self.add(obj,cold, hot, cold.text, hot.text)
 from pathlib import Path
 
 if __name__ == "__main__":
     script = f"{Path(__file__).resolve()}"
-    os.system(f"manim    -s  -c 'WHITE' --video_dir ~/Downloads/ " + script)
+    os.system(f"manim     -p -s -c 'WHITE' --video_dir ~/Downloads/ " + script)
