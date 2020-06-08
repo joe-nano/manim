@@ -411,19 +411,20 @@ class GraphScene(Scene):
         return label
 
     def get_riemann_rectangles(
-        self,
-        graph,
-        x_min=None,
-        x_max=None,
-        dx=0.1,
-        input_sample_type="left",
-        stroke_width=1,
-        stroke_color=BLACK,
-        fill_opacity=1,
-        start_color=None,
-        end_color=None,
-        show_signed_area=True,
-        width_scale_factor=1.001
+            self,
+            graph,
+            x_min=None,
+            x_max=None,
+            dx=0.1,
+            input_sample_type="left",
+            bounded_graph=None,
+            stroke_width=1,
+            stroke_color=BLACK,
+            fill_opacity=1,
+            start_color=None,
+            end_color=None,
+            show_signed_area=True,
+            width_scale_factor=1.001
     ):
         """
         This method returns the VGroup() of the Riemann Rectangles for
@@ -499,9 +500,13 @@ class GraphScene(Scene):
             else:
                 raise Exception("Invalid input sample type")
             graph_point = self.input_to_graph_point(sample_input, graph)
+            if bounded_graph == None:
+                y_point = 0
+            else:
+                y_point = bounded_graph.underlying_function(x)
             points = VGroup(*list(map(VectorizedPoint, [
-                self.coords_to_point(x, 0),
-                self.coords_to_point(x + width_scale_factor * dx, 0),
+                self.coords_to_point(x, y_point),
+                self.coords_to_point(x + width_scale_factor * dx, y_point),
                 graph_point
             ])))
 
@@ -567,28 +572,7 @@ class GraphScene(Scene):
             for n in range(n_iterations)
         ]
 
-    def get_area(self, graph, t_min, t_max):
-        """
-        Returns a VGroup of Riemann rectangles
-        sufficiently small enough to visually
-        approximate the area under the graph passed.
-
-        Parameters
-        ----------
-        graph : ParametricFunction
-            The graph/curve for which the area needs to be gotten.
-
-        t_min : int, float
-            The lower bound of x from which to approximate the area.
-
-        t_max : int, float
-            The upper bound of x until which the area must be approximated.
-
-        Returns
-        -------
-        VGroup
-            The VGroup containing the Riemann Rectangles.
-        """
+    def get_area(self, graph, t_min, t_max, bounded=None):
         numerator = max(t_max - t_min, 0.0001)
         dx = float(numerator) / self.num_rects
         return self.get_riemann_rectangles(
@@ -596,8 +580,9 @@ class GraphScene(Scene):
             x_min=t_min,
             x_max=t_max,
             dx=dx*0.1,
-            stroke_width=0.001,
-        ).set_fill(opacity=0.3).set_color(WHITE)
+            stroke_width=0,
+            bounded_graph=bounded
+        ).set_fill(opacity=self.area_opacity).set_color(BLACK)
 
     def transform_between_riemann_rects(self, curr_rects, new_rects, **kwargs):
         """

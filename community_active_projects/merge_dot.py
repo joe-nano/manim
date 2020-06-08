@@ -81,6 +81,18 @@ class CarnotProcess(GraphScene):
         isotherm34_graph_over_Text = TexMobject(r" T_{min}").scale(0.5).next_to(isotherm34_graph_over,RIGHT,aligned_edge=DOWN, buff=0)
         self.add(isotherm34_graph_over,isotherm34_graph_over_Text)
 
+        upper_graph= self.get_graph(lambda x : p_isotherm(x, Tmax)*0.01  if x < V2 else p_adiabatisch(x, p2,V2)*0.01, x_min=V1-0.1, x_max=V2+0.5 ,color = RED, stroke_opacity=0.5)
+        lower_graph = self.get_graph(lambda x :p_adiabatisch(x, p4,V4)*0.01 if x < V4 else p_isotherm(x, Tmin)*0.01)
+        area_test = self.get_area(upper_graph,V1,V3,bounded=lower_graph)
+        self.add(area_test)
+        # area = self.get_area(isotherm12_graph,V1,V4,bounded=adiabatisch41_graph)
+        # area2 = self.get_area(isotherm12_graph,V4,V2,bounded=isotherm34_graph)
+        # area3 = self.get_area(adiabatisch23_graph,V2,V3,bounded=isotherm34_graph)
+        #
+        # self.add(area,area2,area3)
+
+
+
         self.add(isotherm12_graph,adiabatisch23_graph,isotherm34_graph,adiabatisch41_graph)
         self.wait(0.1)
 
@@ -107,6 +119,9 @@ class CarnotProcess(GraphScene):
         x_label_p1 = TexMobject("{ V }_{ 1 }")
         x_label_p1.next_to(v_line_p1, DOWN)
         self.add(v_line_p1,graph_dot_p1,x_label_p1)
+        num1 = TexMobject(r"{\large \textcircled{\small 1}} ").set_color(BLACK).scale(0.5)
+        num1.next_to(graph_dot_p1,RIGHT,buff=0.4*SMALL_BUFF)
+        self.add(v_line_p1,graph_dot_p1,x_label_p1,num1)
 
         input_tracker_p1 = ValueTracker(V2)
         v_line_p1 = get_v_line(input_tracker_p1,adiabatisch23_graph)
@@ -114,7 +129,9 @@ class CarnotProcess(GraphScene):
         graph_dot_p1.move_to(get_graph_point(input_tracker_p1,adiabatisch23_graph))
         x_label_p1 = TexMobject("{ V }_{ 2 }")
         x_label_p1.next_to(v_line_p1, DOWN)
-        self.add(v_line_p1,graph_dot_p1,x_label_p1)
+        num1 = TexMobject(r"{\large \textcircled{\small 2}} ").set_color(BLACK).scale(0.5)
+        num1.next_to(graph_dot_p1,UP,buff=0.4*SMALL_BUFF)
+        self.add(v_line_p1,graph_dot_p1,x_label_p1,num1)
 
         input_tracker_p1 = ValueTracker(V3)
         v_line_p1 = get_v_line(input_tracker_p1,isotherm34_graph)
@@ -123,6 +140,9 @@ class CarnotProcess(GraphScene):
         x_label_p1 = TexMobject("{ V }_{ 3 }")
         x_label_p1.next_to(v_line_p1, DOWN)
         self.add(v_line_p1,graph_dot_p1,x_label_p1)
+        num1 = TexMobject(r"{\large \textcircled{\small 3}} ").set_color(BLACK).scale(0.5)
+        num1.next_to(graph_dot_p1,UP,buff=0.4*SMALL_BUFF)
+        self.add(v_line_p1,graph_dot_p1,x_label_p1,num1)
 
         input_tracker_p1 = ValueTracker(V4)
         v_line_p1 = get_v_line(input_tracker_p1,adiabatisch41_graph)
@@ -130,10 +150,12 @@ class CarnotProcess(GraphScene):
         graph_dot_p1.move_to(get_graph_point(input_tracker_p1,adiabatisch41_graph))
         x_label_p1 = TexMobject("{ V }_{ 4 }")
         x_label_p1.next_to(v_line_p1, DOWN)
-        self.add(v_line_p1,graph_dot_p1,x_label_p1)
+        num1 = TexMobject(r"{\large \textcircled{\small 4}} ").set_color(BLACK).scale(0.5)
+        num1.next_to(graph_dot_p1,DOWN+LEFT,buff=-0.3*SMALL_BUFF)
+        self.add(v_line_p1,graph_dot_p1,x_label_p1,num1)
 
 from pathlib import Path
 
 if __name__ == "__main__":
     script = f"{Path(__file__).resolve()}"
-    os.system(f"manim   -p -s  -c 'WHITE' --video_dir ~/Downloads/ " + script)
+    os.system(f"manim    -s  -c 'WHITE' --video_dir ~/Downloads/ " + script)
