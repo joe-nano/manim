@@ -572,17 +572,17 @@ class GraphScene(Scene):
             for n in range(n_iterations)
         ]
 
-    def get_area(self, graph, t_min, t_max, bounded=None):
+    def get_area(self, graph, t_min, t_max, bounded=None,dx_scaling = 1):
         numerator = max(t_max - t_min, 0.0001)
         dx = float(numerator) / self.num_rects
         return self.get_riemann_rectangles(
             graph,
             x_min=t_min,
             x_max=t_max,
-            dx=dx*0.1,
+            dx=dx*dx_scaling,
             stroke_width=0,
             bounded_graph=bounded
-        ).set_fill(opacity=self.area_opacity).set_color(BLACK)
+        ).set_fill(opacity=0.3).set_color(BLACK)
 
     def transform_between_riemann_rects(self, curr_rects, new_rects, **kwargs):
         """
