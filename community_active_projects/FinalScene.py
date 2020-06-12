@@ -22,7 +22,7 @@ class CarnotProcess(GraphScene):
         "function_color": RED,
         "axes_color": GREY,
 
-        "x_label_direction": DOWN,
+        "x_label_direction": RIGHT,
         "y_label_direction": LEFT,
     }
 
@@ -30,10 +30,9 @@ class CarnotProcess(GraphScene):
         R = 8.314
 
         self.setup_axes(animate=False)
-        self.x_axis_label_mob.shift(LEFT*abs(self.y_axis[0].points[0]-self.x_axis[0].points[0]))
+        self.x_axis_label_mob.shift(0.5*LEFT*abs(self.y_axis[0].points[0]-self.x_axis[0].points[0]))
         # self.ti.shift(LEFT*abs(self.y_axis[0].points[0]-self.x_axis[0].points[0]))
         self.x_axis.shift(LEFT*abs(self.y_axis[0].points[0]-self.x_axis[0].points[0]))
-
         import matplotlib.pyplot as plt
         from scipy.constants import zero_Celsius
         plt.rcParams['figure.dpi'] = 150
@@ -282,19 +281,20 @@ class CarnotProcess(GraphScene):
         lin_plat1B  = Line(plat1B.copy().shift(LEFT*0.4),plat1B.copy().shift(RIGHT*0.4)).set_color(LIGHT_BROWN).set_opacity(0.4)
 
         plat2A = Dot(dot_3.get_center()+UP*stamp_thickness+LEFT).set_color(LIGHT_BROWN).set_opacity(0.4)
+        plat2A_later= plat2A.copy()
         lin_plat2A  = Line(plat2A.copy().shift(LEFT*0.4),plat2A.copy().shift(RIGHT*0.4)).set_color(LIGHT_BROWN).set_opacity(0.4)
         plat2B = Dot(dot_3.get_center()+UP*stamp_thickness+RIGHT).set_color(LIGHT_BROWN).set_opacity(0.4)
         lin_plat2B  = Line(plat2B.copy().shift(LEFT*0.4),plat2B.copy().shift(RIGHT*0.4)).set_color(LIGHT_BROWN).set_opacity(0.4)
 
+        val_tracker= ValueTracker(V1)
 
-        self.add(plat1A,lin_plat1A,lin_plat1B,lin_plat2A,lin_plat2B)
+        self.add(lin_plat1A,lin_plat1B,lin_plat2A,lin_plat2B)
         self.add(weight_heavy,weight_light)
 
         weight_heavy.move_to(plat1A.get_center(),aligned_edge=DOWN)
         height_of_weight_heavy =  weight_heavy.get_center()[1]-plat1A.get_center()[1]
         weight_light.move_to(plat2A.get_center(),aligned_edge=DOWN)
         height_of_weight_light = weight_light.get_center()[1]-plat2A.get_center()[1]
-        val_tracker= ValueTracker(V1)
         def update_y_coordinate_of_stemp(mob):
             mob.set_y((val_tracker.get_value()-V1) /(V3-V1) *2 +dot_1.get_y()+stamp_thickness/2)
             return mob
@@ -332,24 +332,30 @@ class CarnotProcess(GraphScene):
             square.set_height((stemp.get_center()-obj.get_bottom())[1]-stamp_thickness/2,stretch=True)
             square.align_to(obj,DOWN)
             integ = int((val_tracker.get_value()-V1)/(V4-V1)*(num_colors-1))
-            print(integ)
             square.set_color(cols[integ])
             return square
 
         self.add(square)
 
         #### START
-        square.add_updater(update_gas_square)
-        self.play(weight_heavy.shift, RIGHT)
-        self.wait()
-        weight_heavy.add_updater(update_y_coordinate_of_weight_heavy)
+        sourunding_dot = Dot().scale(1.3).set_fill(color=BLACK).set_z_index(-1)
+        innerdot = Dot().set_color(WHITE).scale(1)
+        moving_dot= VGroup(sourunding_dot,innerdot)
+        moving_dot.move_to(get_graph_point(val_tracker,isotherm12_graph))
+        self.add(moving_dot)
 
         #1-2
-        self.play(val_tracker.set_value, V2, rate_func= linear)
+        self.wait()
+        square.add_updater(update_gas_square)
+        self.play(weight_heavy.shift, RIGHT)
+        weight_heavy.add_updater(update_y_coordinate_of_weight_heavy)
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker,isotherm12_graph)))
+        self.play(val_tracker.set_value, V2, rate_func= linear, run_time=2)
         self.play(baths_hotcold.shift, RIGHT*DISTANCELEFTRIGHT)
         #2-3
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker,adiabatisch23_graph)))
         square.add_updater(update_gas_square_turn_blue)
-        self.play(val_tracker.set_value, V3, rate_func= linear)
+        self.play(val_tracker.set_value, V3,  rate_func= linear, run_time=2)
         weight_heavy.remove_updater(update_y_coordinate_of_weight_heavy)
         self.play(weight_heavy.shift, RIGHT)
         self.play(baths_hotcold.shift, RIGHT*DISTANCELEFTRIGHT)
@@ -358,42 +364,69 @@ class CarnotProcess(GraphScene):
         square.remove_updater(update_gas_square_turn_blue)
 
         #3-4
-        self.play(val_tracker.set_value, V4, rate_func= linear)
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker,isotherm34_graph_over)))
+        self.play(val_tracker.set_value, V4,  rate_func= linear, run_time=2)
         self.play(baths_hotcold.shift, LEFT*DISTANCELEFTRIGHT)
 
         #4-1
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker,adiabatisch41_graph)))
         square.add_updater(update_gas_square_turn_red)
-        self.play(val_tracker.set_value, V1, rate_func= linear)
+        self.play(val_tracker.set_value, V1,  rate_func= linear, run_time=2)
         self.play(weight_light.shift, RIGHT)
+        weight_light.remove_updater(update_y_coordinate_of_weight_light)
+        self.play(baths_hotcold.shift, LEFT*DISTANCELEFTRIGHT)
+        square.remove_updater(update_gas_square_turn_red)
         self.wait()
 
-        val_tracker0 =ValueTracker(V1)
-        moving_dot = Dot()
-        self.add(moving_dot)
-        moving_dot.move_to(get_graph_point(val_tracker0,isotherm12_graph)).set_color(GREEN)
-        #start animation
-        ##1-2
-        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker0,isotherm12_graph)))
-        self.play(val_tracker0.set_value, V2, rate_func= linear,run_time=1)
-        self.wait()
+        ## new circle
+        wl1 = weight_light.deepcopy()
+        wh1 = weight_heavy.deepcopy()
 
-        ##2-3
-        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker0,adiabatisch23_graph)))
-        self.play(val_tracker0.set_value, V3, rate_func= linear,run_time=1)
-        self.wait()
+        self.remove(weight_light)
+        self.remove(weight_heavy)
+        self.add(wl1,wh1)
+        weight_light = SVGMobject(str(path_weight)).set_stroke(width=0).scale(0.4)
+        weight_light.set_color(interpolate_color(GREY,WHITE,0.2))
+        weight_light.scale(0.829)
+        weight_heavy = SVGMobject(str(path_weight)).set_stroke(width=0).scale(0.4)
+        weight_heavy.set_color(interpolate_color(GREY,BLACK,0.2))
+        weight_heavy.move_to(plat1A.get_center(), aligned_edge=DOWN).set_z_index(2)
+        weight_light.move_to(plat2A.get_center(), aligned_edge=DOWN).set_z_index(2)
+        self.play(FadeIn(weight_light),FadeIn(weight_heavy))
+        self.play(VGroup(wl1,wh1).shift,RIGHT)
 
-        ##3-4
-        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker0,isotherm34_graph_over)))
-        self.play(val_tracker0.set_value, V4, rate_func= linear,run_time=1)
-        self.wait()
+        #1-2 second cicle
+        square.add_updater(update_gas_square)
+        self.play(weight_heavy.shift, RIGHT)
+        weight_heavy.add_updater(update_y_coordinate_of_weight_heavy)
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker,isotherm12_graph)))
+        self.play(val_tracker.set_value, V2, rate_func= linear, run_time=2)
+        self.play(baths_hotcold.shift, RIGHT*DISTANCELEFTRIGHT)
+        #2-3
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker,adiabatisch23_graph)))
+        square.add_updater(update_gas_square_turn_blue)
+        self.play(val_tracker.set_value, V3,  rate_func= linear, run_time=2)
+        weight_heavy.remove_updater(update_y_coordinate_of_weight_heavy)
+        self.play(weight_heavy.shift, RIGHT)
+        self.play(baths_hotcold.shift, RIGHT*DISTANCELEFTRIGHT)
+        self.play(weight_light.shift, RIGHT)
+        weight_light.add_updater(update_y_coordinate_of_weight_light)
+        square.remove_updater(update_gas_square_turn_blue)
 
-        ##4-1
-        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker0,adiabatisch41_graph)))
-        self.play(val_tracker0.set_value, V1, rate_func= linear,run_time=1)
-        self.wait()
+        #3-4
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker,isotherm34_graph_over)))
+        self.play(val_tracker.set_value, V4,  rate_func= linear, run_time=2)
+        self.play(baths_hotcold.shift, LEFT*DISTANCELEFTRIGHT)
 
+        #4-1
+        moving_dot.add_updater(lambda x: x.move_to(get_graph_point(val_tracker,adiabatisch41_graph)))
+        square.add_updater(update_gas_square_turn_red)
+        self.play(val_tracker.set_value, V1,  rate_func= linear, run_time=2)
+        self.play(weight_light.shift, RIGHT)
+        self.play(baths_hotcold.shift, LEFT*DISTANCELEFTRIGHT)
+        self.wait()
 from pathlib import Path
 
 if __name__ == "__main__":
     script = f"{Path(__file__).resolve()}"
-    os.system(f"manim      -m   -c 'WHITE' --video_dir ~/Downloads/ " + script)
+    os.system(f"manim   -p  -s  -c 'WHITE' --video_dir ~/Downloads/ " + script)
