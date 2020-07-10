@@ -1,14 +1,17 @@
-name: Manim Community
+name: ManimCommunity
 
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Test
-      - run: echo "Test!"
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
