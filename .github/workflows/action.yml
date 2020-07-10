@@ -5,13 +5,25 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
+      - name: Checkout the repository
+        uses: actions/checkout@v2
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+
+      - name: Install system dependencies (Linux)
+        run: sh ./.travis/linux.sh
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt pytest
+
+      - name: Install manim
+        run: pip install .
+
+      - name: Run tests
+        run: pytest
