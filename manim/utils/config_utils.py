@@ -334,7 +334,7 @@ def _from_command_line():
     # Manim can be called from the command line in three different
     # ways.  The first two involve using the manim or manimcm commands
     prog = os.path.split(sys.argv[0])[-1]
-    from_cli_command = prog in ["manim", "manimcm"]
+    from_cli_command = prog in ["manim", "manimcm", "__main__.py"]
 
     # The third way involves using `python -m manim ...`.  In this
     # case, the CLI arguments passed to manim do not include 'manim',
