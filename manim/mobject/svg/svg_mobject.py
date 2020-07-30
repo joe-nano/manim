@@ -173,10 +173,10 @@ class SVGMobject(VMobject):
         stroke_color = rect_element.getAttribute("stroke")
         stroke_width = rect_element.getAttribute("stroke-width")
         corner_radius = rect_element.getAttribute("rx")
-
+        opacity=1
         # input preprocessing
         if fill_color in ["", "none", "#FFF", "#FFFFFF"] or Color(fill_color) == Color(WHITE):
-            self.fill_opacity = 0
+            opacity = 0
             fill_color = BLACK  # shdn't be necessary but avoids error msgs
         if fill_color in ["#000", "#000000"]:
             fill_color = WHITE
@@ -204,7 +204,7 @@ class SVGMobject(VMobject):
                 stroke_width=stroke_width,
                 stroke_color=stroke_color,
                 fill_color=fill_color,
-                fill_opacity=self.fill_opacity
+                fill_opacity=opacity
             )
         else:
             mob = RoundedRectangle(
