@@ -95,8 +95,9 @@ class Text(SVGMobject):
 
     def get_space_width(self):
         size = self.size * 10
-
-        dir_name = config['text_dir']
+        # BUG ! Hardcoded replacement
+        # dir_name = config['text_dir']
+        dir_name = 'media/texts'
         file_name = os.path.join(dir_name, "space") + '.svg'
 
         surface = cairo.SVGSurface(file_name, 600, 400)
@@ -291,8 +292,9 @@ class Text(SVGMobject):
         if self.font == '':
             if NOT_SETTING_FONT_MSG != '':
                 logger.warning(NOT_SETTING_FONT_MSG)
-
-        dir_name = config['text_dir']
+        # BUG ! Hardcoded replacement
+        # dir_name = config['text_dir']
+        dir_name = 'media/texts'
         hash_name = self.text2hash()
         file_name = os.path.join(dir_name, hash_name)+'.svg'
         if os.path.exists(file_name):
