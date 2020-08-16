@@ -1,6 +1,6 @@
 ![logo](logo/cropped.png)
 
-[![Build Status](https://travis-ci.com/ManimCommunity/manim.svg?branch=master)](https://travis-ci.com/ManimCommunity/manim)
+![CI](https://github.com/ManimCommunity/manim/workflows/CI/badge.svg)
 [![Documentation](https://img.shields.io/badge/docs-EulerTour-blue.svg)](https://www.eulertour.com/docs)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
 [![Manim Subreddit](https://img.shields.io/reddit/subreddit-subscribers/manim.svg?color=ff4301&label=reddit)](https://www.reddit.com/r/manim/)
@@ -24,7 +24,6 @@ Manim is an animation engine for explanatory math videos. It's used to create pr
     + [FFmpeg Installation](#ffmpeg-installation-1)
     + [SoX Installation](#sox-installation-1)
     + [LaTeX Installation](#latex-installation-1)
-    + [Additional Installation Steps](#additional-installation-steps)
   * [Arch/Manjaro](#archmanjaro)
     + [Cairo Installation](#cairo-installation-2)
     + [FFmpeg Installation](#ffmpeg-installation-2)
@@ -208,13 +207,13 @@ If you have installed MacTeX and are comfortable with it, do not install BasicTe
 
 ### Installing Manim-Community itself
 
-Manim runs on Python 3.7+. If you'd like to just use the library, you can install it from PyPI via pip:
+1. Manim-Community runs on Python 3.6+. If you'd like to just use the library, you can install it from PyPI via pip:
 
 ```sh
-pip3 install manimlib
+pip3 install manimce
 ```
 
-However, if you'd like to contribute to and/or help develop
+2. However, if you'd like to contribute to and/or help develop
 `manim-community`, you can clone this branch to your local device. To do
 this, first make sure you have `git` installed. Then, clone this repo by
 executing either
@@ -229,7 +228,7 @@ or
 git clone https://github.com/ManimCommunity/manim.git
 ```
 
-depending on whether you want to use HTTPS or SSH. Finally, run the
+depending on whether you want to use HTTPS or SSH. Finally, after having cloned this repo, run the
 following:
 
 ```sh
@@ -242,7 +241,12 @@ To run your first example Scene, you can run the following commands:
 
 ### For users:
 
-1. Download the `example_scenes/basic.py` file from [GitHub](https://github.com/ManimCommunity/manim/blob/master/example_scenes/basic.py)
+1. Download the `example_scenes/basic.py` file from [GitHub](https://raw.github.com/ManimCommunity/manim/blob/master/example_scenes/basic.py), or place it manually
+in your current working directory with
+```sh
+wget https://raw.github.com/ManimCommunity/manim/master/example_scenes/basic.py
+```
+
 2. Run the following command:
 ```sh
 manim example_scenes/basic.py SquareToCircle -pl
